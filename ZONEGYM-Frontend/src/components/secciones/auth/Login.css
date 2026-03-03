@@ -1,0 +1,77 @@
+.login-container {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #000000, #1a1a1a);
+    min-height: calc(100vh - 80px); /* Ajusta según el alto de tu Navbar */
+    background-color: #000; /* Fondo negro */
+}
+
+.login-form {
+    background: #111;
+    padding: 40px;
+    border-radius: 12px;
+    width: 320px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+    border: 1px solid rgba(255, 0, 0, 0.2);
+}
+
+.login-form h2 {
+    text-align: center;
+    color: #ff0000;
+    margin-bottom: 25px;
+}
+
+.login-form input {
+    margin-bottom: 18px;
+    padding: 12px;
+    border-radius: 8px;
+    border: 2px solid #333;
+    background-color: #1f1f1f;
+    color: white;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+/* Placeholder más visible */
+.login-form input::placeholder {
+    color: #aaa;
+}
+
+/* Cuando haces clic */
+.login-form input:focus {
+    outline: none;
+    border: 2px solid #ff0000;
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+}
+
+.login-form button {
+    padding: 10px;
+    background: #ff0000;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.login-form button:hover {
+    background: #cc0000;
+}
+
+.toggle-text {
+    color: white;
+    margin-top: 15px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.toggle-text span {
+    color: #ff0000;
+    cursor: pointer;
+    font-weight: bold;
+}
