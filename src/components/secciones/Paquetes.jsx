@@ -1,390 +1,378 @@
-// src/components/secciones/Paquetes.jsx
-import React, { useMemo, useState } from "react";
+import React from "react";
 // eslint-disable-next-line no-unused-vars
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+
+const packagesData = [
+  {
+    id: "mensual",
+    title: "Mensual",
+    price: 700,
+    oldPrice: 800,
+    people: "1 persona",
+    description:
+      "Ideal para construir hábito y mantener constancia con acceso general al gym.",
+    plus: "Acceso general + opción de reservar clases.",
+    buttonText: "Elegir mensual",
+    badge: "Ahorra $100",
+  },
+  {
+    id: "estudiante",
+    title: "Estudiante",
+    price: 500,
+    oldPrice: 700,
+    people: "1 persona",
+    description:
+      "Pensado para horarios flexibles y para que entrenar sí sea accesible.",
+    plus: "Precio especial para estudiantes activos.",
+    buttonText: "Elegir estudiante",
+    badge: "Ahorra $200",
+  },
+  {
+    id: "pareja",
+    title: "Pareja",
+    price: 900,
+    oldPrice: 1400,
+    people: "2 personas",
+    description:
+      "Entrenar acompañado ayuda a no abandonar y hace más fácil mantener la rutina.",
+    plus: "Ideal para dos personas con una sola promoción.",
+    buttonText: "Elegir pareja",
+    badge: "Ahorra $500",
+  },
+  {
+    id: "familiar",
+    title: "Familiar",
+    price: 1750,
+    oldPrice: 4900,
+    people: "Hasta 7 personas",
+    description:
+      "Para familias que quieren salud, disciplina y ahorro en un solo plan.",
+    plus: "Plan familiar para hasta 7 integrantes.",
+    buttonText: "Elegir familiar",
+    badge: "Ahorra $3150",
+  },
+];
 
 export default function Paquetes() {
-  // ✅ Imagen de fondo (sin assets para evitar error)
-  const gymBg =
-    "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=2400&auto=format&fit=crop";
+  const navigate = useNavigate();
 
-  // Demo: "plan seleccionado" (listo para backend)
-  const [selectedId, setSelectedId] = useState(null);
-  const [toast, setToast] = useState("");
+  const savedUser = localStorage.getItem("user");
+  const user = savedUser ? JSON.parse(savedUser) : null;
 
-  const paquetes = useMemo(
-    () => [
-      {
-        id: "mensual",
-        titulo: "Mensual",
-        desc: "Ideal para construir hábito. Acceso a clases por horario.",
-        plus: ["Renovación: si completas el reto, obtienes beneficio."],
-        cta: "Elegir mensual",
-      },
-      {
-        id: "estudiante",
-        titulo: "Estudiante",
-        desc: "Horarios flexibles + clases dinámicas para mantener constancia.",
-        plus: ["Plus: Pack reto mensual."],
-        cta: "Elegir estudiante",
-      },
-      {
-        id: "pareja",
-        titulo: "Pareja",
-        desc: "Entrenar acompañado ayuda a no abandonar. Ideal para constancia.",
-        plus: ["Plus: Reto en dupla + recordatorio semanal (demo)."],
-        cta: "Elegir pareja",
-      },
-      {
-        id: "familiar",
-        titulo: "Familiar",
-        desc: "Para familias que quieren salud y disciplina juntos.",
-        plus: ["Plus: Plan de 3 días fijos por familia (demo)."],
-        cta: "Elegir familiar",
-      },
-    ],
-    [],
-  );
-
-  const showToast = (msg) => {
-    setToast(msg);
-    window.clearTimeout(window.__zg_toast);
-    window.__zg_toast = window.setTimeout(() => setToast(""), 2200);
+  const goToRegisterWithPackage = (pkg) => {
+    navigate(`/login?mode=register&package=${encodeURIComponent(pkg.title)}`);
   };
 
-  // ✅ Botones funcionales (demo)
-  const onElegir = (id, titulo) => {
-    setSelectedId(id);
-    showToast(`✅ Seleccionaste: ${titulo} (demo)`);
-    // Aquí luego llamas backend:
-    // POST /api/paquetes/seleccionar { paquete: id }
-  };
-
-  const onRenovar = async () => {
-  if (!selectedId) {
-    showToast("⚠️ Primero elige un paquete");
-    return;
-  }
-
-  try {
-    const response = await fetch("http://localhost:5000/api/pagos/renovar", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        paquete: selectedId,
-      }),
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      showToast(data.mensaje);
-    } else {
-      showToast("❌ Error en el pago");
-    }
-
-  } catch (error) {
-    console.error(error);
-    showToast("⚠️ No se pudo conectar con el servidor");
-  }
-};
-
-
-
-  // Animaciones
-  const page = {
-    hidden: { opacity: 0, y: 14, filter: "blur(6px)" },
-    show: {
-      opacity: 1,
-      y: 0,
-      filter: "blur(0px)",
-      transition: { duration: 0.5 },
-    },
-    exit: {
-      opacity: 0,
-      y: 10,
-      filter: "blur(6px)",
-      transition: { duration: 0.25 },
-    },
-  };
-
-  const card = {
-    hidden: { opacity: 0, y: 18, scale: 0.98 },
-    show: (i = 0) => ({
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: { delay: 0.08 * i, duration: 0.45, ease: "easeOut" },
-    }),
+  const renovarMensualidad = () => {
+    const phoneNumber = "524681026947"; // CAMBIA ESTE NÚMERO POR EL REAL
+    const userName = user?.name ? user.name : "cliente";
+    const message = encodeURIComponent(
+      `Hola, soy ${userName} y quiero renovar mi mensualidad en ZoneGym. ¿Me pueden apoyar con el proceso de pago y validación?`,
+    );
+    window.open(`https://wa.me/${phoneNumber}?text=${message}`, "_blank");
   };
 
   return (
-    <AnimatePresence mode="wait">
-      <motion.section
-        key="paquetes"
-        variants={page}
-        initial="hidden"
-        animate="show"
-        exit="exit"
-        style={{
-          minHeight: "calc(100vh - 70px)",
-          backgroundImage: `linear-gradient(180deg, rgba(0,0,0,.62), rgba(0,0,0,.88)), url(${gymBg})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          padding: "70px 0 90px",
-        }}
+    <motion.section
+      style={styles.section}
+      initial={{ opacity: 0, scale: 1.02 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.55, ease: "easeOut" }}
+    >
+      <div style={styles.overlay} />
+
+      <motion.div
+        style={styles.container}
+        initial={{ opacity: 0, y: 18 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.08, duration: 0.45 }}
       >
-        <div style={{ width: "min(1100px, 92%)", margin: "0 auto" }}>
-          {/* Encabezado */}
-          <motion.div
-            variants={card}
-            custom={0}
-            initial="hidden"
-            animate="show"
-          >
-            <h1
-              style={{
-                color: "white",
-                textAlign: "center",
-                fontSize: "clamp(30px, 4vw, 44px)",
-                marginBottom: 8,
-                fontWeight: 900,
-                letterSpacing: 0.2,
-              }}
-            >
-              Membresías simples
-            </h1>
-            <p
-              style={{
-                color: "rgba(255,255,255,.80)",
-                textAlign: "center",
-                marginBottom: 22,
-              }}
-            >
-              Entre más fácil sea seguir, más probable es que renueves.
-            </p>
-          </motion.div>
+        <motion.h1
+          style={styles.title}
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.12, duration: 0.45 }}
+        >
+          Membresías simples
+        </motion.h1>
 
-          {/* Cards */}
-          <motion.div
-            variants={card}
-            custom={1}
-            initial="hidden"
-            animate="show"
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))",
-              gap: 14,
-              marginBottom: 16,
-            }}
-          >
-            {paquetes.map((p, i) => {
-              const isSelected = selectedId === p.id;
+        <motion.p
+          style={styles.subtitle}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.18, duration: 0.45 }}
+        >
+          Entre más fácil sea seguir, más probable es que renueves. Elige el
+          plan que mejor se adapte a ti.
+        </motion.p>
 
-              return (
-                <motion.div
-                  key={p.id}
-                  variants={card}
-                  custom={i + 2}
-                  initial="hidden"
-                  animate="show"
-                  whileHover={{ y: -4 }}
-                  style={{
-                    background: "rgba(255,255,255,.07)",
-                    border: isSelected
-                      ? "1px solid rgba(255,140,60,.55)"
-                      : "1px solid rgba(255,255,255,.14)",
-                    borderRadius: 14,
-                    padding: 14,
-                    backdropFilter: "blur(10px)",
-                    boxShadow: "0 18px 45px rgba(0,0,0,.35)",
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      gap: 10,
-                    }}
-                  >
-                    <h3 style={{ margin: 0, color: "white", fontWeight: 900 }}>
-                      {p.titulo}
-                    </h3>
-
-                    {isSelected && (
-                      <span
-                        style={{
-                          fontSize: 12,
-                          fontWeight: 900,
-                          color: "rgba(255,255,255,.92)",
-                          background: "rgba(255,90,0,.22)",
-                          border: "1px solid rgba(255,90,0,.35)",
-                          padding: "4px 10px",
-                          borderRadius: 999,
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        Seleccionado
-                      </span>
-                    )}
-                  </div>
-
-                  <p
-                    style={{
-                      color: "rgba(255,255,255,.78)",
-                      margin: "10px 0 10px",
-                    }}
-                  >
-                    {p.desc}
-                  </p>
-
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: 8,
-                      marginBottom: 12,
-                    }}
-                  >
-                    {p.plus.map((t, idx) => (
-                      <div
-                        key={idx}
-                        style={{
-                          display: "inline-flex",
-                          alignItems: "center",
-                          gap: 8,
-                          color: "rgba(255,255,255,.86)",
-                          fontSize: 13,
-                          fontWeight: 800,
-                        }}
-                      >
-                        <span
-                          style={{
-                            fontSize: 11,
-                            fontWeight: 900,
-                            background: "rgba(255,255,255,.10)",
-                            border: "1px solid rgba(255,255,255,.16)",
-                            padding: "3px 8px",
-                            borderRadius: 999,
-                          }}
-                        >
-                          Plus
-                        </span>
-                        <span style={{ lineHeight: 1.25 }}>{t}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <motion.button
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
-                    onClick={() => onElegir(p.id, p.titulo)}
-                    style={{
-                      ...btnGhost,
-                      width: "100%",
-                      border: isSelected
-                        ? "1px solid rgba(255,90,0,.55)"
-                        : btnGhost.border,
-                      background: isSelected
-                        ? "rgba(255,90,0,.12)"
-                        : btnGhost.background,
-                    }}
-                  >
-                    {p.cta}
-                  </motion.button>
-                </motion.div>
-              );
-            })}
-          </motion.div>
-
-          {/* CTA principal */}
-          <motion.div
-            variants={card}
-            custom={10}
-            initial="hidden"
-            animate="show"
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              gap: 12,
-              flexWrap: "wrap",
-              marginTop: 8,
-            }}
-          >
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.96 }}
-              onClick={onRenovar}
-              style={btnPrimary}
-            >
-              Renovar ahora
-            </motion.button>
-
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.96 }}
-              onClick={() =>
-                showToast("📌 Demo: promo aplicada (cuando haya backend)")
-              }
-              style={btnGhost}
-            >
-              Aplicar promo (demo)
-            </motion.button>
-          </motion.div>
-        </div>
-
-        {/* TOAST */}
-        <AnimatePresence>
-          {toast && (
+        <motion.div
+          style={styles.grid}
+          initial="hidden"
+          animate="show"
+          variants={{
+            hidden: {},
+            show: {
+              transition: {
+                staggerChildren: 0.08,
+                delayChildren: 0.25,
+              },
+            },
+          }}
+        >
+          {packagesData.map((pkg) => (
             <motion.div
-              initial={{ opacity: 0, y: 14, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 10, scale: 0.98 }}
-              style={toastStyle}
+              key={pkg.id}
+              style={styles.card}
+              variants={{
+                hidden: { opacity: 0, y: 22, scale: 0.98 },
+                show: { opacity: 1, y: 0, scale: 1 },
+              }}
+              whileHover={{
+                y: -8,
+                scale: 1.015,
+                borderColor: "rgba(255,122,10,.28)",
+                boxShadow: "0 0 28px rgba(255,122,10,.12)",
+              }}
+              transition={{ duration: 0.22 }}
             >
-              {toast}
+              <div style={styles.cardHeader}>
+                <h3 style={styles.cardTitle}>{pkg.title}</h3>
+                <span style={styles.badge}>{pkg.badge}</span>
+              </div>
+
+              <div style={styles.people}>{pkg.people}</div>
+
+              <div style={styles.priceWrap}>
+                <span style={styles.oldPrice}>${pkg.oldPrice}</span>
+                <span style={styles.price}>${pkg.price}</span>
+                <span style={styles.priceMonth}>/ mes</span>
+              </div>
+
+              <p style={styles.description}>{pkg.description}</p>
+
+              <div style={styles.plusBox}>
+                <span style={styles.plusLabel}>Incluye</span>
+                <p style={styles.plusText}>{pkg.plus}</p>
+              </div>
+
+              <motion.button
+                style={styles.chooseBtn}
+                onClick={() => goToRegisterWithPackage(pkg)}
+                whileHover={{
+                  scale: 1.04,
+                  y: -2,
+                  boxShadow: "0 0 24px rgba(255,122,10,.25)",
+                }}
+                whileTap={{ scale: 0.98 }}
+              >
+                {pkg.buttonText}
+              </motion.button>
             </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.section>
-    </AnimatePresence>
+          ))}
+        </motion.div>
+
+        <motion.div
+          style={styles.bottomActions}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 0.45 }}
+        >
+          <motion.button
+            style={styles.renewBtn}
+            onClick={renovarMensualidad}
+            whileHover={{
+              scale: 1.04,
+              y: -2,
+              boxShadow: "0 0 26px rgba(255,122,10,.28)",
+            }}
+            whileTap={{ scale: 0.98 }}
+          >
+            Renovar mensualidad
+          </motion.button>
+
+          <motion.button
+            style={styles.secondaryBtn}
+            onClick={() => navigate("/login?mode=register")}
+            whileHover={{ scale: 1.03, y: -2 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            Solicitar membresía
+          </motion.button>
+        </motion.div>
+      </motion.div>
+    </motion.section>
   );
 }
 
-/* ======= estilos inline (copiar/pegar) ======= */
-const btnPrimary = {
-  border: "none",
-  padding: "10px 18px",
-  borderRadius: 999,
-  fontWeight: 900,
-  color: "white",
-  background: "linear-gradient(90deg, #ff7a18, #ff3d00)",
-  boxShadow: "0 10px 24px rgba(255,90,0,.25)",
-};
-
-const btnGhost = {
-  border: "1px solid rgba(255,255,255,.22)",
-  padding: "10px 16px",
-  borderRadius: 999,
-  fontWeight: 900,
-  color: "rgba(255,255,255,.92)",
-  background: "rgba(255,255,255,.06)",
-  backdropFilter: "blur(10px)",
-};
-
-const toastStyle = {
-  position: "fixed",
-  left: "50%",
-  bottom: 18,
-  transform: "translateX(-50%)",
-  background: "rgba(0,0,0,.75)",
-  color: "white",
-  border: "1px solid rgba(255,255,255,.18)",
-  padding: "10px 14px",
-  borderRadius: 12,
-  backdropFilter: "blur(10px)",
-  fontWeight: 900,
-  zIndex: 9999,
+const styles = {
+  section: {
+    position: "relative",
+    minHeight: "100vh",
+    width: "100%",
+    padding: "110px 24px 70px",
+    backgroundImage:
+      'url("https://images.unsplash.com/photo-1556817411-31ae72fa3ea0?q=80&w=2400&auto=format&fit=crop")',
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
+  },
+  overlay: {
+    position: "absolute",
+    inset: 0,
+    background:
+      "linear-gradient(180deg, rgba(0,0,0,.55) 0%, rgba(0,0,0,.80) 45%, rgba(0,0,0,.92) 100%)",
+  },
+  container: {
+    position: "relative",
+    zIndex: 2,
+    maxWidth: "1500px",
+    margin: "0 auto",
+    color: "#fff",
+  },
+  title: {
+    textAlign: "center",
+    fontSize: "64px",
+    lineHeight: 1.02,
+    fontWeight: 900,
+    margin: 0,
+  },
+  subtitle: {
+    textAlign: "center",
+    fontSize: "18px",
+    opacity: 0.92,
+    margin: "18px auto 30px",
+    maxWidth: "880px",
+    lineHeight: 1.5,
+  },
+  grid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+    gap: "18px",
+  },
+  card: {
+    background: "rgba(0,0,0,.45)",
+    border: "1px solid rgba(255,255,255,.12)",
+    borderRadius: "24px",
+    padding: "24px",
+    backdropFilter: "blur(10px)",
+  },
+  cardHeader: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: "10px",
+    marginBottom: "10px",
+  },
+  cardTitle: {
+    fontSize: "34px",
+    fontWeight: 900,
+    margin: 0,
+  },
+  badge: {
+    fontSize: "13px",
+    fontWeight: 800,
+    padding: "8px 12px",
+    borderRadius: "999px",
+    background: "rgba(255,122,10,.14)",
+    color: "#ffb26b",
+    border: "1px solid rgba(255,122,10,.28)",
+    whiteSpace: "nowrap",
+  },
+  people: {
+    fontSize: "15px",
+    opacity: 0.8,
+    marginBottom: "14px",
+  },
+  priceWrap: {
+    display: "flex",
+    alignItems: "flex-end",
+    gap: "10px",
+    marginBottom: "16px",
+    flexWrap: "wrap",
+  },
+  oldPrice: {
+    fontSize: "20px",
+    color: "rgba(255,255,255,.45)",
+    textDecoration: "line-through",
+    fontWeight: 700,
+  },
+  price: {
+    fontSize: "46px",
+    fontWeight: 900,
+    color: "#ff7a0a",
+    lineHeight: 1,
+  },
+  priceMonth: {
+    fontSize: "16px",
+    opacity: 0.85,
+    marginBottom: "6px",
+  },
+  description: {
+    fontSize: "17px",
+    lineHeight: 1.55,
+    opacity: 0.92,
+    minHeight: "95px",
+    marginBottom: "16px",
+  },
+  plusBox: {
+    border: "1px solid rgba(255,255,255,.10)",
+    background: "rgba(255,255,255,.04)",
+    borderRadius: "16px",
+    padding: "14px",
+    marginBottom: "18px",
+  },
+  plusLabel: {
+    display: "inline-block",
+    fontSize: "12px",
+    fontWeight: 900,
+    marginBottom: "8px",
+    color: "#ffb26b",
+  },
+  plusText: {
+    margin: 0,
+    fontSize: "15px",
+    lineHeight: 1.5,
+    opacity: 0.9,
+  },
+  chooseBtn: {
+    width: "100%",
+    padding: "16px 20px",
+    borderRadius: "999px",
+    border: "none",
+    background: "linear-gradient(90deg, #ff7a0a 0%, #ff8c1a 100%)",
+    color: "#111",
+    fontWeight: 900,
+    fontSize: "18px",
+    cursor: "pointer",
+  },
+  bottomActions: {
+    marginTop: "28px",
+    display: "flex",
+    justifyContent: "center",
+    gap: "14px",
+    flexWrap: "wrap",
+  },
+  renewBtn: {
+    padding: "18px 28px",
+    borderRadius: "999px",
+    border: "none",
+    background: "linear-gradient(90deg, #ff7a0a 0%, #ff8c1a 100%)",
+    color: "#111",
+    fontWeight: 900,
+    fontSize: "18px",
+    cursor: "pointer",
+  },
+  secondaryBtn: {
+    padding: "18px 28px",
+    borderRadius: "999px",
+    border: "1px solid rgba(255,255,255,.16)",
+    background: "rgba(255,255,255,.08)",
+    color: "#fff",
+    fontWeight: 900,
+    fontSize: "18px",
+    cursor: "pointer",
+  },
 };

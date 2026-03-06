@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React from "react";
 // eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -6,33 +6,16 @@ import { useNavigate } from "react-router-dom";
 export default function Inicio() {
   const navigate = useNavigate();
 
-  // DEMO: progreso de renovación (antes estaba sumando por clic)
-  // aquí lo dejamos como "avance demo" para que se vea la barra
-  const [progreso, setProgreso] = useState(58); // cámbialo si quieres
-
-  const progresoTxt = useMemo(() => `${progreso}%`, [progreso]);
-
-  // ✅ Botones (demo) + listos para backend
   const irReto = () => navigate("/reto");
   const irHorarios = () => navigate("/horarios");
-
-  const renovarDemo = async () => {
-    // DEMO: suma 7% cada vez hasta 100
-    setProgreso((p) => Math.min(100, p + 7));
-
-    // BACKEND (ejemplo):
-    // await api.post("/renovacion/intento", { motivo: "banner_renovar" })
-    // const { data } = await api.get("/renovacion/mes")
-    // setProgreso(data.porcentaje)
-  };
 
   return (
     <motion.section
       style={styles.section}
-      initial={{ opacity: 0, y: 16, scale: 0.995 }}
+      initial={{ opacity: 0, y: 16, scale: 1.02 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: 10 }}
-      transition={{ duration: 0.45, ease: "easeOut" }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
     >
       <div style={styles.overlay} />
 
@@ -50,7 +33,23 @@ export default function Inicio() {
         >
           NO SE TRATA DE EMPEZAR.
           <br />
-          <span style={styles.titleAccent}>SE TRATA DE CONTINUAR.</span>
+          <motion.span
+            style={styles.titleAccent}
+            animate={{
+              textShadow: [
+                "0 0 10px rgba(249,115,22,.20)",
+                "0 0 22px rgba(249,115,22,.45)",
+                "0 0 10px rgba(249,115,22,.20)",
+              ],
+            }}
+            transition={{
+              duration: 2.2,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          >
+            SE TRATA DE CONTINUAR.
+          </motion.span>
         </motion.h1>
 
         <motion.p
@@ -64,29 +63,64 @@ export default function Inicio() {
           empuja.
         </motion.p>
 
-        {/* Acciones principales */}
         <motion.div
           style={styles.actions}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.25, duration: 0.45 }}
         >
-          <button style={styles.btnPrimary} onClick={irReto}>
+          <motion.button
+            style={styles.btnPrimary}
+            onClick={irReto}
+            whileHover={{
+              scale: 1.06,
+              y: -2,
+              boxShadow: "0 0 24px rgba(249,115,22,.35)",
+            }}
+            whileTap={{ scale: 0.97 }}
+            transition={{ duration: 0.18 }}
+          >
             Ver reto del mes
-          </button>
-          <button style={styles.btnGhost} onClick={irHorarios}>
+          </motion.button>
+
+          <motion.button
+            style={styles.btnGhost}
+            onClick={irHorarios}
+            whileHover={{
+              scale: 1.04,
+              y: -2,
+              backgroundColor: "rgba(255,255,255,.10)",
+            }}
+            whileTap={{ scale: 0.98 }}
+            transition={{ duration: 0.18 }}
+          >
             Ver horarios
-          </button>
-          <button style={styles.btnGhost2} onClick={renovarDemo}>
-            Renovar
-          </button>
+          </motion.button>
+
+          <motion.button
+            style={styles.btnGhost2}
+            onClick={() => navigate("/paquetes")}
+            whileHover={{
+              scale: 1.04,
+              y: -2,
+              backgroundColor: "rgba(255,255,255,.16)",
+            }}
+            whileTap={{ scale: 0.98 }}
+            transition={{ duration: 0.18 }}
+          >
+            Ver paquetes
+          </motion.button>
         </motion.div>
 
-        {/* Mensaje motivacional */}
         <motion.div
           style={styles.msgCard}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
+          whileHover={{
+            scale: 1.015,
+            borderColor: "rgba(249,115,22,.35)",
+            boxShadow: "0 0 24px rgba(249,115,22,.12)",
+          }}
           transition={{ delay: 0.32, duration: 0.45 }}
         >
           <div style={styles.msgTitle}>Mensaje motivacional</div>
@@ -97,39 +131,90 @@ export default function Inicio() {
           </div>
         </motion.div>
 
-        {/* Barra (como antes) */}
         <motion.div
-          style={styles.progressWrap}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
+          style={styles.motivationWrap}
+          initial={{ opacity: 0, y: 18, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          whileHover={{
+            y: -4,
+            boxShadow: "0 0 30px rgba(249,115,22,.10)",
+            borderColor: "rgba(249,115,22,.28)",
+          }}
           transition={{ delay: 0.38, duration: 0.45 }}
         >
-          <div style={styles.progressHeader}>
-            <span style={styles.progressLabel}>Meta de renovación mensual</span>
-            <span style={styles.progressPct}>{progresoTxt}</span>
+          <div style={styles.motivationHeader}>
+            <span style={styles.motivationBadge}>
+              🔥 Tu mejor versión empieza hoy
+            </span>
           </div>
 
-          <div style={styles.progressBar}>
+          <h3 style={styles.motivationTitle}>
+            No esperes sentirte listo. Empieza y deja que el progreso te motive.
+          </h3>
+
+          <p style={styles.motivationText}>
+            Cada entrenamiento suma. Cada día que vienes al gym construyes
+            disciplina, energía, confianza y resultados reales. No se trata de
+            hacerlo perfecto, se trata de no rendirte.
+          </p>
+
+          <div style={styles.motivationGrid}>
             <motion.div
-              style={styles.progressFill}
-              initial={{ width: 0 }}
-              animate={{ width: `${progreso}%` }}
-              transition={{ duration: 0.55, ease: "easeOut" }}
-            />
-          </div>
+              style={styles.motivationCard}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              whileHover={{ y: -6, scale: 1.02 }}
+              transition={{ delay: 0.45, duration: 0.35 }}
+            >
+              <div style={styles.motivationCardTitle}>💪 Más fuerza</div>
+              <div style={styles.motivationCardText}>
+                Entrenar constantemente mejora tu resistencia, tu energía y tu
+                seguridad.
+              </div>
+            </motion.div>
 
-          <div style={styles.progressHint}>
-            Micro-objetivo: 3 días fijos por semana. Si lo agendas, lo cumples.
-            Si lo cumples, renuevas.
+            <motion.div
+              style={styles.motivationCard}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              whileHover={{ y: -6, scale: 1.02 }}
+              transition={{ delay: 0.53, duration: 0.35 }}
+            >
+              <div style={styles.motivationCardTitle}>🧠 Más disciplina</div>
+              <div style={styles.motivationCardText}>
+                El gym no solo transforma tu cuerpo, también fortalece tu mente.
+              </div>
+            </motion.div>
+
+            <motion.div
+              style={styles.motivationCard}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              whileHover={{ y: -6, scale: 1.02 }}
+              transition={{ delay: 0.61, duration: 0.35 }}
+            >
+              <div style={styles.motivationCardTitle}>🔥 Resultados reales</div>
+              <div style={styles.motivationCardText}>
+                Cuando eres constante, los cambios llegan y se notan dentro y
+                fuera del gym.
+              </div>
+            </motion.div>
           </div>
         </motion.div>
 
-        {/* Tarjetas abajo */}
         <motion.div
           style={styles.cards}
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.45, duration: 0.45 }}
+          initial="hidden"
+          animate="show"
+          variants={{
+            hidden: {},
+            show: {
+              transition: {
+                staggerChildren: 0.08,
+                delayChildren: 0.48,
+              },
+            },
+          }}
         >
           <Card
             title="⚡ Plan sencillo"
@@ -163,9 +248,18 @@ function Card({ title, text, onClick }) {
       type="button"
       onClick={onClick}
       style={styles.card}
-      whileHover={{ y: -4, scale: 1.01 }}
-      whileTap={{ scale: 0.99 }}
-      transition={{ duration: 0.18 }}
+      variants={{
+        hidden: { opacity: 0, y: 18 },
+        show: { opacity: 1, y: 0 },
+      }}
+      whileHover={{
+        y: -6,
+        scale: 1.02,
+        borderColor: "rgba(249,115,22,.30)",
+        boxShadow: "0 0 24px rgba(249,115,22,.12)",
+      }}
+      whileTap={{ scale: 0.98 }}
+      transition={{ duration: 0.2 }}
     >
       <div style={styles.cardTitle}>{title}</div>
       <div style={styles.cardText}>{text}</div>
@@ -183,7 +277,6 @@ const styles = {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    // ✅ FOTO INCLUIDA (puedes cambiarla por otra URL)
     backgroundImage:
       'url("https://images.unsplash.com/photo-1556817411-31ae72fa3ea0?q=80&w=2400&auto=format&fit=crop")',
     backgroundSize: "cover",
@@ -203,6 +296,7 @@ const styles = {
     maxWidth: "1100px",
     color: "#fff",
     textAlign: "center",
+    filter: "drop-shadow(0 0 18px rgba(0,0,0,.18))",
   },
 
   title: {
@@ -269,37 +363,63 @@ const styles = {
   msgTitle: { fontWeight: 900, marginBottom: "6px" },
   msgText: { opacity: 0.9, lineHeight: 1.45 },
 
-  progressWrap: {
+  motivationWrap: {
     margin: "10px auto 0",
     maxWidth: "900px",
     textAlign: "left",
-    background: "rgba(0,0,0,.28)",
+    background: "rgba(0,0,0,.30)",
     border: "1px solid rgba(255,255,255,.14)",
-    borderRadius: "16px",
-    padding: "14px 16px",
+    borderRadius: "20px",
+    padding: "22px 20px",
     backdropFilter: "blur(10px)",
   },
-  progressHeader: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
+  motivationHeader: {
+    marginBottom: "12px",
+  },
+  motivationBadge: {
+    display: "inline-block",
+    padding: "8px 14px",
+    borderRadius: "999px",
+    background: "rgba(249,115,22,.15)",
+    border: "1px solid rgba(249,115,22,.35)",
+    color: "#fdba74",
+    fontWeight: 800,
+    fontSize: "13px",
+  },
+  motivationTitle: {
+    fontSize: "28px",
+    fontWeight: 900,
+    lineHeight: 1.15,
+    marginBottom: "12px",
+    color: "#fff",
+  },
+  motivationText: {
+    fontSize: "16px",
+    lineHeight: 1.6,
+    color: "rgba(255,255,255,.85)",
+    marginBottom: "18px",
+  },
+  motivationGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+    gap: "14px",
+  },
+  motivationCard: {
+    background: "rgba(255,255,255,.04)",
+    border: "1px solid rgba(255,255,255,.10)",
+    borderRadius: "16px",
+    padding: "16px",
+  },
+  motivationCardTitle: {
+    fontWeight: 900,
+    color: "#fb923c",
     marginBottom: "8px",
   },
-  progressLabel: { fontWeight: 900, opacity: 0.95 },
-  progressPct: { fontWeight: 900, opacity: 0.95 },
-  progressBar: {
-    height: "10px",
-    borderRadius: "999px",
-    background: "rgba(255,255,255,.18)",
-    overflow: "hidden",
+  motivationCardText: {
+    fontSize: "14px",
+    lineHeight: 1.5,
+    color: "rgba(255,255,255,.78)",
   },
-  progressFill: {
-    height: "100%",
-    borderRadius: "999px",
-    background: "#f97316",
-    boxShadow: "0 0 18px rgba(249,115,22,.45)",
-  },
-  progressHint: { marginTop: "8px", fontSize: "12px", opacity: 0.85 },
 
   cards: {
     marginTop: "18px",
