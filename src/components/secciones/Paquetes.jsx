@@ -60,15 +60,38 @@ export default function Paquetes() {
     // POST /api/paquetes/seleccionar { paquete: id }
   };
 
-  const onRenovar = () => {
-    if (!selectedId) {
-      showToast("⚠️ Primero elige un paquete");
-      return;
+  const onRenovar = async () => {
+  if (!selectedId) {
+    showToast("⚠️ Primero elige un paquete");
+    return;
+  }
+
+  try {
+    const response = await fetch("http://localhost:5000/api/pagos/renovar", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        paquete: selectedId,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      showToast(data.mensaje);
+    } else {
+      showToast("❌ Error en el pago");
     }
-    showToast("💳 Renovación iniciada (demo). Listo para backend.");
-    // Aquí luego backend:
-    // POST /api/pagos/renovar { paquete: selectedId }
-  };
+
+  } catch (error) {
+    console.error(error);
+    showToast("⚠️ No se pudo conectar con el servidor");
+  }
+};
+
+
 
   // Animaciones
   const page = {
