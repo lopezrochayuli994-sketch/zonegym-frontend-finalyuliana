@@ -62,7 +62,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const endpoint = isRegister ? "/register" : "/login";
+    const endpoint = isRegister ? "register" : "login";
 
     const bodyData = isRegister
       ? {
