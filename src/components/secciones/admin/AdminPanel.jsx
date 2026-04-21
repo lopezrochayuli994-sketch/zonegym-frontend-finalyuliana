@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 // ✅ USAR RUTA RELATIVA (clave con nginx)
-const API_URL = "https://zonegym-backend-finalyuliana-production.up.railway.app/api";
-const FRONTEND_URL = "https://zonegym-frontend-finalyuliana.vercel.app/";
+const API_URL = "https://zonegym-backend-production.up.railway.app/api";
 
 export default function AdminPanel() {
   const [users, setUsers] = useState([]);
