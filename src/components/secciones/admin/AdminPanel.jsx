@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const API_URL = "https://zonegym-backend-production.up.railway.app";
+// ✅ USAR RUTA RELATIVA (clave con nginx)
+const API_URL = "https://zonegym-backend-finalyuliana-production.up.railway.app/api";
+const FRONTEND_URL = "https://zonegym-frontend-finalyuliana.vercel.app/";
 
 export default function AdminPanel() {
   const [users, setUsers] = useState([]);
@@ -21,30 +23,69 @@ export default function AdminPanel() {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/users`);
+      const token = localStorage.getItem("token");
+
+      // 🔥 VALIDACIÓN EXTRA
+      if (!token) {
+        alert("No estás autenticado");
+        navigate("/login");
+        return;
+      }
+
+      const response = await fetch(`${API_URL}/users`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // 🔐 JWT
+        },
+      });
+
       const data = await response.json();
+
+      if (!response.ok) {
+        console.error("Error:", data.message);
+        alert("Error al obtener usuarios");
+        return;
+      }
+
       setUsers(data);
     } catch (error) {
-      console.error(error);
-      alert("Error al obtener usuarios");
+      console.error("Error:", error);
+      alert("Error de conexión");
     }
   };
 
   const changeStatus = async (id, action) => {
     try {
-      const response = await fetch(`${API_URL}/api/users${action}/${id}`, {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        alert("No estás autenticado");
+        navigate("/login");
+        return;
+      }
+
+      const response = await fetch(`${API_URL}/users/${action}/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // 🔐 JWT
         },
       });
 
       const data = await response.json();
+
+      if (!response.ok) {
+        console.error("Error:", data.message);
+        alert("Error al actualizar usuario");
+        return;
+      }
+
       alert(data.message);
-      fetchUsers();
+      fetchUsers(); // 🔄 recargar lista
     } catch (error) {
-      console.error(error);
-      alert("Error al actualizar usuario");
+      console.error("Error:", error);
+      alert("Error de conexión");
     }
   };
 
@@ -72,6 +113,7 @@ export default function AdminPanel() {
                 <th className="p-3 text-left">Acciones</th>
               </tr>
             </thead>
+
             <tbody>
               {users
                 .filter((u) => u.role !== "admin")
@@ -83,6 +125,7 @@ export default function AdminPanel() {
                     <td className="p-3">{user.paymentReference || "-"}</td>
                     <td className="p-3">{user.paymentProof || "-"}</td>
                     <td className="p-3">{user.messageForAdmin || "-"}</td>
+
                     <td className="p-3">
                       {user.membershipStatus === "active" ? (
                         <span className="bg-green-600 px-3 py-1 rounded-full text-xs font-bold">
@@ -98,6 +141,7 @@ export default function AdminPanel() {
                         </span>
                       )}
                     </td>
+
                     <td className="p-3 flex gap-2 flex-wrap">
                       <button
                         onClick={() => changeStatus(user._id, "activate")}
@@ -105,6 +149,7 @@ export default function AdminPanel() {
                       >
                         Activar
                       </button>
+
                       <button
                         onClick={() => changeStatus(user._id, "deactivate")}
                         className="bg-red-600 hover:bg-red-700 px-3 py-2 rounded-lg font-bold"

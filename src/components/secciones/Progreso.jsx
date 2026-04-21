@@ -22,7 +22,7 @@ export default function MiProgreso() {
   const faltan = Math.max(0, objetivo - completados);
   useEffect(() => {
 
-  fetch(`http://localhost:5000/api/progreso/${completados}`)
+  fetch(`/api/progreso/${completados}`)
     .then(res => res.json())
     .then(data => {
       setNivel(data.nivel);
@@ -33,7 +33,7 @@ export default function MiProgreso() {
 }, [completados]);
 useEffect(() => {
 
-  fetch("http://localhost:5000/api/streak")
+  fetch("/api/streak")
     .then(res => res.json())
     .then(data => {
       setRacha(data.streak);
@@ -78,7 +78,7 @@ useEffect(() => {
   const usarBeneficio = async () => {
   try {
 
-    const res = await fetch("http://localhost:5000/api/beneficio", {
+    const res = await fetch("/api/beneficio", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

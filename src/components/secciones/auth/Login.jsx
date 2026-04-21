@@ -17,7 +17,8 @@ const Login = () => {
     messageForAdmin: "",
   });
 
-  const API_URL = "https://zonegym-backend-production.up.railway.app/api/users";
+  const API_URL = "https://zonegym-backend-finalyuliana-production.up.railway.app/api";
+  const FRONTEND_URL = "https://zonegym-frontend-finalyuliana.vercel.app/";
 
   useEffect(() => {
     const mode = searchParams.get("mode");
@@ -95,9 +96,10 @@ const Login = () => {
         return;
       }
 
+      // 🟢 REGISTRO
       if (isRegister) {
         alert(
-          "Solicitud enviada correctamente. Tu cuenta queda pendiente de activación hasta que el administrador valide tu pago.",
+          "Solicitud enviada correctamente. Tu cuenta queda pendiente de activación hasta que el administrador valide tu pago."
         );
         resetForm();
         setIsRegister(false);
@@ -105,16 +107,25 @@ const Login = () => {
         return;
       }
 
-      localStorage.setItem("user", JSON.stringify(data));
-      //alert(data.message || `Bienvenido, ${data.name}`);
+      // 🔐 LOGIN (JWT)
+      if (!data.token || !data.user) {
+        alert("Error: el servidor no envió el token correctamente");
+        return;
+      }
 
-      if (data.role === "admin") {
+      // Guardar token y usuario
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      // Redirección por rol
+      if (data.user.role === "admin") {
         navigate("/admin");
       } else {
         navigate("/");
       }
 
       window.location.reload();
+
     } catch (error) {
       console.error("Error de conexión:", error);
       alert("No se pudo conectar con el servidor.");
@@ -178,7 +189,7 @@ const Login = () => {
             <input
               type="text"
               name="paymentProof"
-              placeholder="Link, folio o nombre del comprobante"
+              placeholder="Link, folio o comprobante"
               value={formData.paymentProof}
               onChange={handleChange}
               required
@@ -191,23 +202,12 @@ const Login = () => {
               onChange={handleChange}
               rows="4"
               required
-              style={{
-                marginBottom: "18px",
-                padding: "12px",
-                borderRadius: "8px",
-                border: "2px solid #333",
-                backgroundColor: "#1f1f1f",
-                color: "white",
-                fontSize: "14px",
-                width: "100%",
-                resize: "vertical",
-              }}
             />
           </>
         )}
 
         <button type="submit">
-          {isRegister ? "Enviar comprobante y solicitar acceso" : "Entrar"}
+          {isRegister ? "Enviar comprobante" : "Entrar"}
         </button>
 
         <p className="toggle-text">
