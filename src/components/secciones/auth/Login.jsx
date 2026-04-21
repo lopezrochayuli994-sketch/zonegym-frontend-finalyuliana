@@ -17,7 +17,7 @@ const Login = () => {
     messageForAdmin: "",
   });
 
- const API_URL = "https://zonegym-backend-production.up.railway.app/api";
+const API_URL = "https://zonegym-backend-finalyuliana-production.up.railway.app/api";
   useEffect(() => {
     const mode = searchParams.get("mode");
     const selectedPackage = searchParams.get("package");
