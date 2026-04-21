@@ -58,7 +58,6 @@ export default function Comentarios() {
         body: JSON.stringify({
           text,
           user: "Usuario ZoneGym",
-          rating: 5,
         }),
       });
 
