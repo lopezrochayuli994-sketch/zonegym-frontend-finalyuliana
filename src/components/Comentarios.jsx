@@ -118,7 +118,7 @@ export default function Comentarios() {
             </p>
 
             {/* ⚠️ NOTA: esto puede ser inseguro si no sanitizas */}
-            <div dangerouslySetInnerHTML={{ __html: c.text }} />
+            <p>{c.text}</p>
 
             <p className="text-xs text-gray-400">
               {new Date(c.createdAt).toLocaleString()}
