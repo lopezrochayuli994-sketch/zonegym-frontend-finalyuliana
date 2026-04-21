@@ -17,7 +17,9 @@ const Login = () => {
     messageForAdmin: "",
   });
 
-const API_URL = "https://zonegym-backend-finalyuliana-production.up.railway.app/api";
+  // ✅ URL DE TU BACKEND
+  const API_URL = "https://zonegym-backend-finalyuliana-production.up.railway.app/api";
+
   useEffect(() => {
     const mode = searchParams.get("mode");
     const selectedPackage = searchParams.get("package");
@@ -61,7 +63,8 @@ const API_URL = "https://zonegym-backend-finalyuliana-production.up.railway.app/
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const endpoint = isRegister ? "register" : "login";
+    // 🔥 CORREGIDO AQUÍ
+    const endpoint = isRegister ? "users/register" : "users/login";
 
     const bodyData = isRegister
       ? {
