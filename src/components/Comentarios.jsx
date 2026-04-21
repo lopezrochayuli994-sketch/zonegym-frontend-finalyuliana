@@ -1,20 +1,36 @@
 import { useEffect, useState } from "react";
 
-const API_URL = "";
+// 🔥 URL REAL DEL BACKEND
+const API_URL = "https://zonegym-backend-finalyuliana-production.up.railway.app/api";
 
 export default function Comentarios() {
   const [comments, setComments] = useState([]);
   const [text, setText] = useState("");
+  const [loading, setLoading] = useState(false);
 
   // ✅ Obtener comentarios
   const fetchComments = async () => {
     try {
-      const res = await fetch(`/api/comments`);
+      setLoading(true);
+
+      const res = await fetch(`${API_URL}/comments`);
+
+      // 🔥 DEBUG INTELIGENTE
+      const contentType = res.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        const text = await res.text();
+        console.error("❌ No es JSON:", text);
+        throw new Error("Respuesta inválida del servidor");
+      }
+
       const data = await res.json();
       setComments(data);
+
     } catch (error) {
       console.error(error);
       alert("Error al cargar comentarios");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -32,7 +48,9 @@ export default function Comentarios() {
     }
 
     try {
-      const res = await fetch(`/api/comments`, {
+      setLoading(true);
+
+      const res = await fetch(`${API_URL}/comments`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -43,14 +61,24 @@ export default function Comentarios() {
         }),
       });
 
+      const contentType = res.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        const text = await res.text();
+        console.error("❌ No es JSON:", text);
+        throw new Error("Respuesta inválida del servidor");
+      }
+
       const data = await res.json();
 
       alert(data.message);
       setText("");
-      fetchComments(); // 🔥 recargar lista
+      fetchComments();
+
     } catch (error) {
       console.error(error);
       alert("Error al enviar comentario");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -71,25 +99,26 @@ export default function Comentarios() {
 
         <button
           type="submit"
-          className="mt-3 bg-red-600 px-4 py-2 rounded-lg font-bold hover:bg-red-700"
+          disabled={loading}
+          className="mt-3 bg-red-600 px-4 py-2 rounded-lg font-bold hover:bg-red-700 disabled:opacity-50"
         >
-          Enviar
+          {loading ? "Enviando..." : "Enviar"}
         </button>
       </form>
+
+      {/* LOADING */}
+      {loading && <p className="text-gray-400">Cargando...</p>}
 
       {/* LISTA */}
       <div className="space-y-3">
         {comments.map((c) => (
-          <div
-            key={c._id}
-            className="bg-white/10 p-3 rounded-lg"
-          >
+          <div key={c._id} className="bg-white/10 p-3 rounded-lg">
             <p className="font-bold text-red-400">
               {c.user}
             </p>
-            <div dangerouslySetInnerHTML={{ __html: c.text }} />
-           
 
+            {/* ⚠️ NOTA: esto puede ser inseguro si no sanitizas */}
+            <div dangerouslySetInnerHTML={{ __html: c.text }} />
 
             <p className="text-xs text-gray-400">
               {new Date(c.createdAt).toLocaleString()}
